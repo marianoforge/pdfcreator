@@ -1,8 +1,9 @@
 [build]
-builder = "nixpacks"
-buildCommand = "./build.sh"
+builder = "DOCKERFILE"
+dockerfilePath = "Dockerfile"
+watchPatterns = ["**/*.py", "**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx"]
 
 [deploy]
-startCommand = "./run.sh"
 healthcheckPath = "/api/templates/"
-restartPolicyType = "ON_FAILURE" 
+restartPolicyType = "ON_FAILURE"
+numReplicas = 1 
