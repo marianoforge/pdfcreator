@@ -33,10 +33,10 @@ COPY ./wait-for-postgres.sh /wait-for-postgres.sh
 RUN chmod +x /wait-for-postgres.sh
 
 # Ejecutar collectstatic
-RUN python manage.py collectstatic --noinput
+RUN if [ "$DJANGO_SETTINGS_MODULE" != "core.settings.dev" ]; then python manage.py collectstatic --noinput; fi
 
 # Configurar puerto
 EXPOSE 8000
 
-# Comando para iniciar la aplicación usando gunicorn
-CMD ["/bin/sh", "-c", "/wait-for-postgres.sh db && gunicorn core.wsgi:application --bind 0.0.0.0:8000"] 
+# Railway automáticamente asigna a PORT la variable con el puerto expuesto
+CMD gunicorn core.wsgi:application --bind 0.0.0.0:${PORT:-8000} 
