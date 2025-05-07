@@ -1,1 +1,1 @@
-web: cd backend && python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT 
+web: source venv/bin/activate && cd backend && python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT 

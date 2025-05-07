@@ -41,18 +41,9 @@ railway variables set \
     PDFMONKEY_API_KEY="$pdfmonkey_api_key" \
     PDFMONKEY_PREVENTION_TEMPLATE_ID="$pdfmonkey_template_id" \
     ALLOWED_HOSTS="*.up.railway.app" \
-    CORS_ALLOWED_ORIGINS="https://*.up.railway.app"
-
-# Asegurarse de que package.json y Procfile existan
-if [ ! -f package.json ]; then
-    echo "Error: No se encontró el archivo package.json en la raíz del proyecto."
-    exit 1
-fi
-
-if [ ! -f Procfile ]; then
-    echo "Error: No se encontró el archivo Procfile en la raíz del proyecto."
-    exit 1
-fi
+    CORS_ALLOWED_ORIGINS="https://*.up.railway.app" \
+    NODE_VERSION="18.17.1" \
+    NPM_VERSION="9.6.7"
 
 # Agregar Plugin de PostgreSQL
 echo "Agregando plugin de PostgreSQL..."

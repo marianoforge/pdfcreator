@@ -1,0 +1,29 @@
+{
+  "providers": [
+    "node",
+    "python"
+  ],
+  "buildImage": "node:18-slim",
+  "variables": {
+    "NODE_ENV": "production",
+    "PYTHON_VERSION": "3.9"
+  },
+  "phases": {
+    "install": {
+      "cmds": [
+        "cd frontend && npm install",
+        "python -m venv venv",
+        "source venv/bin/activate && pip install -r requirements.txt"
+      ]
+    },
+    "build": {
+      "cmds": [
+        "cd frontend && npm run build",
+        "source venv/bin/activate && cd backend && python manage.py collectstatic --noinput"
+      ]
+    }
+  },
+  "start": {
+    "cmd": "source venv/bin/activate && cd backend && python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT"
+  }
+} 

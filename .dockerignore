@@ -1,0 +1,26 @@
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/*$py.class
+**/*.so
+backend/venv/
+venv/
+
+# Django
+backend/staticfiles/
+backend/media/
+
+# Database
+**.sqlite3
+
+# Development
+.git
+.github
+.gitignore
+.env
+.DS_Store
+**/.DS_Store 

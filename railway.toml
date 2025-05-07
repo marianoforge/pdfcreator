@@ -1,0 +1,8 @@
+[build]
+builder = "nixpacks"
+buildCommand = "./build.sh"
+
+[deploy]
+startCommand = "./run.sh"
+healthcheckPath = "/api/templates/"
+restartPolicyType = "ON_FAILURE" 
