@@ -1,59 +1,62 @@
 #!/bin/bash
 set -e
 
-echo "Deploying to Railway..."
+echo "==== Despliegue de PDF Creator en Railway ===="
 
 # Check if railway CLI is installed
 if ! command -v railway &> /dev/null; then
-    echo "Installing Railway CLI..."
+    echo "🔄 Instalando Railway CLI..."
     npm install -g @railway/cli
 fi
 
 # Ask to commit and push changes
-echo "Do you want to commit and push changes to Git repository? (y/n)"
+echo "💾 ¿Deseas hacer commit y subir los cambios al repositorio Git? (y/n)"
 read commit_changes
 
 if [ "$commit_changes" = "y" ] || [ "$commit_changes" = "Y" ]; then
-    echo "Enter commit message:"
+    echo "📝 Escribe el mensaje de commit:"
     read commit_message
     
-    # Add all changes
+    echo "🔄 Agregando cambios al repositorio..."
     git add .
     
-    # Commit changes
+    echo "🔄 Haciendo commit de los cambios..."
     git commit -m "$commit_message"
     
-    # Push to repository
-    echo "Pushing changes to repository..."
+    echo "🔄 Subiendo cambios al repositorio..."
     git push
     
-    echo "Changes pushed successfully!"
+    echo "✅ Cambios subidos correctamente!"
 fi
 
 # Login to Railway
-echo "Logging in to Railway..."
+echo "🔑 Iniciando sesión en Railway..."
 railway login
 
 # Link to an existing project or create a new one
 if railway link &> /dev/null; then
-    echo "Using existing Railway project"
+    echo "🔗 Usando proyecto existente de Railway"
 else
-    echo "Creating a new Railway project..."
+    echo "🏗️ Creando un nuevo proyecto en Railway..."
     railway init
     
     # Ask if PostgreSQL plugin should be added
-    echo "Do you want to add PostgreSQL plugin to the project? (y/n)"
+    echo "🗄️ ¿Deseas añadir el plugin de PostgreSQL al proyecto? (y/n)"
     read add_postgres
     
     if [ "$add_postgres" = "y" ] || [ "$add_postgres" = "Y" ]; then
-        echo "Adding PostgreSQL plugin..."
+        echo "🔄 Añadiendo plugin de PostgreSQL..."
         railway add --plugin postgresql
     fi
 fi
 
 # Deploy using Dockerfile
-echo "Deploying application to Railway..."
+echo "🚀 Desplegando aplicación en Railway..."
 railway up
 
-echo "Deployment complete! Opening Railway dashboard..."
-railway open 
+# Check deployment status
+echo "🔍 Verificando estado del despliegue..."
+railway status
+
+echo "📋 Mostrando logs (presiona Ctrl+C para salir)..."
+railway logs 

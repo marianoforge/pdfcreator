@@ -2,6 +2,9 @@ FROM node:18 as frontend-build
 
 WORKDIR /app
 
+# Increase memory limit for Node.js
+ENV NODE_OPTIONS=--max_old_space_size=2048
+
 # Install frontend dependencies and build
 COPY frontend/package*.json frontend/
 RUN cd frontend && npm install
@@ -25,12 +28,20 @@ ENV PYTHONPATH="/app"
 RUN apt-get update && apt-get install -y \
     postgresql-client \
     netcat-openbsd \
+    gcc \
+    python3-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
+# Copy backend requirements first
+COPY backend/requirements.txt backend/requirements.txt
+
+# Install Python dependencies from backend
+RUN pip install --no-cache-dir -r backend/requirements.txt 
+
+# Copy other requirements and install them
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir gunicorn==21.2.0 whitenoise==6.5.0 psycopg2-binary==2.9.8 dj-database-url==2.1.0 python-decouple==3.8
 RUN mkdir -p .local/bin
 
 # Copy backend code

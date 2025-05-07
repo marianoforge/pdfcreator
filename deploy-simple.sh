@@ -1,71 +1,77 @@
 #!/bin/bash
 
+echo "==== Asistente de despliegue de PDF Creator en Railway ===="
+
 # Verify if railway CLI is installed
 if ! command -v railway &> /dev/null; then
-    echo "Railway CLI is not installed. Installing..."
+    echo "🔄 Railway CLI no está instalado. Instalando..."
     npm install -g @railway/cli
 fi
 
 # Ask to commit and push changes
-echo "Do you want to commit and push changes to Git repository? (y/n)"
+echo "💾 ¿Deseas hacer commit y subir los cambios al repositorio Git? (y/n)"
 read commit_changes
 
 if [ "$commit_changes" = "y" ] || [ "$commit_changes" = "Y" ]; then
-    echo "Enter commit message:"
+    echo "📝 Escribe el mensaje de commit:"
     read commit_message
     
-    # Add all changes
+    echo "🔄 Agregando cambios al repositorio..."
     git add .
     
-    # Commit changes
+    echo "🔄 Haciendo commit de los cambios..."
     git commit -m "$commit_message"
     
-    # Push to repository
-    echo "Pushing changes to repository..."
+    echo "🔄 Subiendo cambios al repositorio..."
     git push
     
-    echo "Changes pushed successfully!"
+    echo "✅ Cambios subidos correctamente!"
 fi
 
 # Check if user is logged in to Railway
+echo "🔑 Iniciando sesión en Railway..."
 railway login
 
 # Link to an existing project or create a new one
-echo "Do you want to create a new project in Railway? (y/n)"
+echo "🔄 ¿Deseas crear un nuevo proyecto en Railway? (y/n)"
 read create_project
 
 if [ "$create_project" = "y" ] || [ "$create_project" = "Y" ]; then
-    echo "Creating a new project in Railway..."
+    echo "🏗️ Creando un nuevo proyecto en Railway..."
     railway init
     
     # Ask if PostgreSQL plugin should be added
-    echo "Do you want to add PostgreSQL plugin to the project? (y/n)"
+    echo "🗄️ ¿Deseas añadir el plugin de PostgreSQL al proyecto? (y/n)"
     read add_postgres
     
     if [ "$add_postgres" = "y" ] || [ "$add_postgres" = "Y" ]; then
-        echo "Adding PostgreSQL plugin..."
+        echo "🔄 Añadiendo plugin de PostgreSQL..."
         railway add --plugin postgresql
     fi
     
     # Configure environment variables
-    echo "Configuring environment variables in Railway..."
-    echo "Add the following environment variables manually in the interactive interface:"
-    echo "- SECRET_KEY (a secret key for Django)"
+    echo "⚙️ Configurando variables de entorno en Railway..."
+    echo "Añade las siguientes variables de entorno manualmente en la interfaz interactiva:"
+    echo "- SECRET_KEY (una clave secreta para Django)"
     echo "- DEBUG=False"
-    echo "- PDFMONKEY_API_KEY (your PDFMonkey API key)"
-    echo "- PDFMONKEY_PREVENTION_TEMPLATE_ID (your PDFMonkey template ID)"
+    echo "- PDFMONKEY_API_KEY (tu clave API de PDFMonkey)"
+    echo "- PDFMONKEY_PREVENTION_TEMPLATE_ID (el ID de tu plantilla de PDFMonkey)"
     echo "- ALLOWED_HOSTS=*.up.railway.app"
     echo "- CORS_ALLOWED_ORIGINS=https://*.up.railway.app"
     
     railway variables
 else
-    echo "Selecting an existing project..."
+    echo "🔗 Seleccionando un proyecto existente..."
     railway link
 fi
 
 # Deploy the application using our Dockerfile
-echo "Deploying the application to Railway..."
+echo "🚀 Desplegando la aplicación en Railway..."
 railway up
 
-echo "Deployment started. Check status on Railway dashboard"
-railway open 
+# Check deployment status
+echo "🔍 Verificando estado del despliegue..."
+railway status
+
+echo "📋 Mostrando logs (presiona Ctrl+C para salir)..."
+railway logs 
