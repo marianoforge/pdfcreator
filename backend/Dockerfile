@@ -25,14 +25,8 @@ RUN pip install --no-cache-dir gunicorn psycopg2-binary dj-database-url python-d
 # Copiar proyecto
 COPY . .
 
-# Crear directorios para archivos estáticos y media
-RUN mkdir -p /app/staticfiles /app/media
-
-# Script para esperar a que PostgreSQL esté listo
-COPY ./wait-for-postgres.sh /wait-for-postgres.sh
-RUN chmod +x /wait-for-postgres.sh
-
-# Ejecutar collectstatic
+# Configurar collectstatic y media
+RUN mkdir -p staticfiles media
 RUN if [ "$DJANGO_SETTINGS_MODULE" != "core.settings.dev" ]; then python manage.py collectstatic --noinput; fi
 
 # Configurar puerto

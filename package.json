@@ -1,0 +1,28 @@
+{
+  "name": "pdfcreator",
+  "version": "1.0.0",
+  "description": "Sistema para generar documentos PDF personalizados",
+  "main": "index.js",
+  "scripts": {
+    "build": "cd frontend && npm install && npm run build",
+    "start": "cd backend && python manage.py collectstatic --noinput && python manage.py migrate && gunicorn core.wsgi:application --bind 0.0.0.0:$PORT"
+  },
+  "engines": {
+    "node": "16.x",
+    "npm": "8.x"
+  },
+  "cacheDirectories": [
+    "frontend/node_modules"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+"
+  },
+  "keywords": [
+    "pdf",
+    "django",
+    "react"
+  ],
+  "author": "",
+  "license": "MIT"
+} 

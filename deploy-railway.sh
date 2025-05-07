@@ -41,12 +41,35 @@ railway variables set \
     PDFMONKEY_API_KEY="$pdfmonkey_api_key" \
     PDFMONKEY_PREVENTION_TEMPLATE_ID="$pdfmonkey_template_id" \
     ALLOWED_HOSTS="*.up.railway.app" \
-    CORS_ALLOWED_ORIGINS="https://*.up.railway.app" \
-    PORT="80"
+    CORS_ALLOWED_ORIGINS="https://*.up.railway.app"
 
-# Mostrar la base de datos
-echo "Railway creará automáticamente una base de datos PostgreSQL."
-echo "Asegúrese de agregar el plugin de PostgreSQL en el dashboard de Railway."
+# Asegurarse de que package.json y Procfile existan
+if [ ! -f package.json ]; then
+    echo "Error: No se encontró el archivo package.json en la raíz del proyecto."
+    exit 1
+fi
+
+if [ ! -f Procfile ]; then
+    echo "Error: No se encontró el archivo Procfile en la raíz del proyecto."
+    exit 1
+fi
+
+# Agregar Plugin de PostgreSQL
+echo "Agregando plugin de PostgreSQL..."
+railway add --plugin postgresql
+
+# Esperar a que la base de datos esté lista
+echo "Esperando a que la base de datos esté lista..."
+sleep 10
+
+# Obtener la variable DATABASE_URL generada automáticamente por Railway
+DATABASE_URL=$(railway variables get DATABASE_URL)
+
+if [ -z "$DATABASE_URL" ]; then
+    echo "No se pudo obtener la URL de la base de datos. Asegúrese de agregar el plugin de PostgreSQL manualmente."
+else
+    echo "Base de datos configurada correctamente."
+fi
 
 # Desplegar la aplicación
 echo "Desplegando la aplicación en Railway..."

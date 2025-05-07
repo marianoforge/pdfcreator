@@ -1,7 +1,6 @@
 import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-import { Spinner } from "@heroui/react";
 
 interface FormData {
   patient_name: string;

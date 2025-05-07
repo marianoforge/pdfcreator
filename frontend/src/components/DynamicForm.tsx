@@ -45,7 +45,6 @@ export function DynamicForm() {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [debugInfo, setDebugInfo] = useState<any>(null);
   const navigate = useNavigate();
 
   // Fetch template on component mount
@@ -146,7 +145,6 @@ export function DynamicForm() {
     
     setSubmitting(true);
     setError(null);
-    setDebugInfo(null);
 
     try {
       console.log("Enviando petición al backend...");
@@ -156,7 +154,6 @@ export function DynamicForm() {
       });
       
       console.log("Respuesta recibida:", response.data);
-      setDebugInfo(response.data);
       
       if (!response.data || !response.data.document) {
         setError("La respuesta no tiene el formato esperado");
