@@ -1,0 +1,47 @@
+{
+  "kind": "collectionType",
+  "collectionName": "pdf_template",
+  "info": {
+    "singularName": "pdf-template",
+    "pluralName": "pdf-templates",
+    "displayName": "pdf-template",
+    "description": ""
+  },
+  "options": {
+    "draftAndPublish": false
+  },
+  "attributes": {
+    "name": {
+      "type": "string",
+      "required": true
+    },
+    "template_id": {
+      "type": "string"
+    },
+    "language": {
+      "type": "enumeration",
+      "enum": ["es", "en"]
+    },
+    "sections": {
+      "type": "component",
+      "repeatable": true,
+      "component": "shared.section"
+    },
+    "patient_name_field": {
+      "type": "string",
+      "default": "patient_name"
+    },
+    "date_field": {
+      "type": "string",
+      "default": "date"
+    },
+    "orientation_name_field": {
+      "type": "string",
+      "default": "orientation_name"
+    },
+    "recommendation_field": {
+      "type": "string",
+      "default": "recommendation"
+    }
+  }
+}

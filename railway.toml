@@ -1,9 +1,0 @@
-[build]
-builder = "DOCKERFILE"
-dockerfilePath = "Dockerfile.simple"
-watchPatterns = ["**/*.py", "**/*.tsx", "**/*.ts", "**/*.js", "**/*.jsx"]
-
-[deploy]
-healthcheckPath = "/api/templates/"
-restartPolicyType = "ON_FAILURE"
-numReplicas = 1 
