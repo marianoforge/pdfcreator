@@ -1,7 +1,5 @@
 import { useState } from "react";
-import axios, { AxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
-import { Spinner } from "@heroui/react";
 
 interface FormData {
   patient_name: string;
@@ -9,15 +7,6 @@ interface FormData {
   orientation_name: string;
   recommendation: string;
   additional_info: string;
-}
-
-interface PDFResponse {
-  document: {
-    download_url: string | null;
-    preview_url: string | null;
-    id: string;
-    status: string;
-  };
 }
 
 export function Form() {
@@ -31,8 +20,6 @@ export function Form() {
   
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null);
-  const [debugInfo, setDebugInfo] = useState<any>(null);
   const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -62,56 +49,19 @@ export function Form() {
     }
     
     setLoading(true);
-    setError(null);
-    setDebugInfo(null);
 
     try {
-      console.log("Enviando petición al backend...");
-      const response = await axios.post<PDFResponse>("http://localhost:8001/api/pdf/", {
-        template_id: "Plan de Prevención",
-        formData: formData,
+      // En lugar de enviar al backend, vamos a usar ReactPDF
+      console.log("Generando PDF con ReactPDF...");
+      
+      // Navegamos a la ruta de visualización de PDF con los datos del formulario
+      navigate('/react-pdf', { 
+        state: { 
+          formData
+        } 
       });
-      
-      console.log("Respuesta recibida:", response.data);
-      setDebugInfo(response.data);
-      
-      if (!response.data || !response.data.document) {
-        setError("La respuesta no tiene el formato esperado");
-        return;
-      }
-      
-      const pdfUrl = response.data.document.download_url || response.data.document.preview_url;
-      
-      console.log("URL del PDF:", pdfUrl);
-      
-      if (pdfUrl) {
-        try {
-          new URL(pdfUrl);
-          
-          navigate('/view-pdf', { 
-            state: { 
-              pdfUrl,
-              documentId: response.data.document.id,
-              status: response.data.document.status
-            } 
-          });
-        } catch (urlError) {
-          setError(`La URL del PDF no es válida: ${pdfUrl}`);
-        }
-      } else {
-        setError("No se pudo obtener una URL válida del PDF generado");
-      }
     } catch (err) {
-      const error = err as AxiosError;
-      console.error("Error al generar PDF:", error);
-      
-      if (error.response) {
-        setError(`Error (${error.response.status}): ${JSON.stringify(error.response.data)}`);
-      } else if (error.request) {
-        setError("No se recibió respuesta del servidor. Verifica la conexión.");
-      } else {
-        setError(`Error: ${error.message}`);
-      }
+      console.error("Error al generar PDF:", err);
     } finally {
       setLoading(false);
     }
@@ -295,39 +245,6 @@ export function Form() {
                     </button>
                   </div>
                 </>
-              )}
-              
-              
-              {error && (
-                <div className="mt-4 p-4 bg-red-50 border-l-4 border-red-500 rounded-md">
-                  <div className="flex">
-                    <div className="flex-shrink-0">
-                      <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-sm text-red-700">{error}</p>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {debugInfo && (
-                <div className="mt-6">
-                  <div className="h-px bg-gray-200 mb-4"></div>
-                  <details className="mt-4">
-                    <summary className="cursor-pointer font-medium text-sm text-gray-700 flex items-center">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Información de depuración
-                    </summary>
-                    <pre className="text-xs mt-2 whitespace-pre-wrap text-gray-600 p-4 bg-gray-50 rounded-md overflow-auto max-h-60">
-                      {JSON.stringify(debugInfo, null, 2)}
-                    </pre>
-                  </details>
-                </div>
               )}
             </form>
           </div>

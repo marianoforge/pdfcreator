@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios";
+// Importamos los templates locales
+import formTemplatesData from "../../data/form_templates.json";
 
 // Template interfaces
 interface FormField {
@@ -28,15 +29,6 @@ interface Template {
   defaults?: Record<string, string>;
 }
 
-interface PDFResponse {
-  document: {
-    download_url: string | null;
-    preview_url: string | null;
-    id: string;
-    status: string;
-  };
-}
-
 export function DynamicForm() {
   const { templateId } = useParams<{ templateId: string }>();
   const [template, setTemplate] = useState<Template | null>(null);
@@ -45,28 +37,29 @@ export function DynamicForm() {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [submitting, setSubmitting] = useState<boolean>(false);
-  const [debugInfo, setDebugInfo] = useState<any>(null);
   const navigate = useNavigate();
 
-  // Fetch template on component mount
+  // Carga de template desde el archivo local
   useEffect(() => {
-    async function fetchTemplate() {
+    function loadTemplate() {
       try {
         setLoading(true);
-        const response = await axios.get(`http://localhost:8001/api/templates/`, {
-          params: { id: templateId }
-        });
         
-        if (response.data && response.data.template) {
-          setTemplate(response.data.template);
+        // Buscamos el template en el archivo local
+        const foundTemplate = formTemplatesData.templates.find(
+          (tmpl: Template) => tmpl.id === templateId
+        );
+        
+        if (foundTemplate) {
+          setTemplate(foundTemplate);
           
           // Initialize form data with default values if available
-          if (response.data.template.defaults) {
-            setFormData(response.data.template.defaults);
+          if (foundTemplate.defaults) {
+            setFormData(foundTemplate.defaults);
           } else {
             // Initialize with empty strings for each field
             const initialData: Record<string, string> = {};
-            response.data.template.fields.forEach((section: FormSection) => {
+            foundTemplate.fields.forEach((section: FormSection) => {
               section.fields.forEach((field: FormField) => {
                 initialData[field.id] = "";
               });
@@ -77,7 +70,7 @@ export function DynamicForm() {
           setError("No se encontró la plantilla solicitada");
         }
       } catch (err) {
-        console.error("Error fetching template:", err);
+        console.error("Error loading template:", err);
         setError("Error al cargar la plantilla. Por favor, inténtelo de nuevo.");
       } finally {
         setLoading(false);
@@ -85,7 +78,7 @@ export function DynamicForm() {
     }
 
     if (templateId) {
-      fetchTemplate();
+      loadTemplate();
     } else {
       setError("No se especificó un ID de plantilla");
       setLoading(false);
@@ -146,55 +139,30 @@ export function DynamicForm() {
     
     setSubmitting(true);
     setError(null);
-    setDebugInfo(null);
 
     try {
-      console.log("Enviando petición al backend...");
-      const response = await axios.post<PDFResponse>("http://localhost:8001/api/pdf/", {
-        template_id: template?.template_id,
-        formData: formData,
+      // En lugar de enviar al backend, vamos a usar ReactPDF
+      console.log("Generando PDF con ReactPDF...");
+      
+      // Preparamos los datos para el formato que espera PlanPDF
+      const planPDFData = {
+        patient_name: formData.patient_name || formData.nombre_paciente || "Paciente",
+        date: formData.date || formData.fecha || new Date().toLocaleDateString(),
+        orientation_name: formData.orientation_name || formData.nombre_orientador || "Orientador",
+        recommendation: formData.recommendation || formData.recomendacion || "",
+        additional_info: formData.additional_info || formData.informacion_adicional || ""
+      };
+      
+      // Navegamos a la ruta de visualización de PDF con los datos del formulario
+      navigate('/react-pdf', { 
+        state: { 
+          formData: planPDFData,
+          templateName: template?.name
+        } 
       });
-      
-      console.log("Respuesta recibida:", response.data);
-      setDebugInfo(response.data);
-      
-      if (!response.data || !response.data.document) {
-        setError("La respuesta no tiene el formato esperado");
-        return;
-      }
-      
-      const pdfUrl = response.data.document.download_url || response.data.document.preview_url;
-      
-      console.log("URL del PDF:", pdfUrl);
-      
-      if (pdfUrl) {
-        try {
-          new URL(pdfUrl);
-          
-          navigate('/view-pdf', { 
-            state: { 
-              pdfUrl,
-              documentId: response.data.document.id,
-              status: response.data.document.status
-            } 
-          });
-        } catch (urlError) {
-          setError(`La URL del PDF no es válida: ${pdfUrl}`);
-        }
-      } else {
-        setError("No se pudo obtener una URL válida del PDF generado");
-      }
     } catch (err) {
-      const error = err as AxiosError;
-      console.error("Error al generar PDF:", error);
-      
-      if (error.response) {
-        setError(`Error (${error.response.status}): ${JSON.stringify(error.response.data)}`);
-      } else if (error.request) {
-        setError("No se recibió respuesta del servidor. Verifica la conexión.");
-      } else {
-        setError(`Error: ${error.message}`);
-      }
+      console.error("Error al generar PDF:", err);
+      setError("Ocurrió un error al intentar generar el PDF. Inténtelo de nuevo más tarde.");
     } finally {
       setSubmitting(false);
     }
@@ -402,7 +370,7 @@ export function DynamicForm() {
                       </svg>
                     </>
                   ) : (
-                    'Generar PDF'
+                    'Generar PDF con React-PDF'
                   )}
                 </button>
               </div>

@@ -3,6 +3,7 @@ import { Form } from "./components/Form";
 import { PDFViewer } from "./components/PDFViewer";
 import { FormSelector } from "./components/FormSelector";
 import { DynamicForm } from "./components/DynamicForm";
+import { ReactPDFViewer } from "./components/ReactPDFViewer";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
           <Route path="/form/:templateId" element={<DynamicForm />} />
           <Route path="/legacy-form" element={<Form />} />
           <Route path="/view-pdf" element={<PDFViewer />} />
+          <Route path="/react-pdf" element={<ReactPDFViewer />} />
         </Routes>
       </div>
     </Router>
