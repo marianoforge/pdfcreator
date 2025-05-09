@@ -1,0 +1,81 @@
+{
+  "templates": [
+    {
+      "id": "plan-prevencion",
+      "name": "Plan de Prevención",
+      "template_id": "Plan de Prevención",
+      "description": "Genera un plan personalizado para fomentar el envejecimiento saludable",
+      "fields": [
+        {
+          "step": 1,
+          "section": "Información del Paciente",
+          "fields": [
+            {
+              "id": "patient_name",
+              "name": "Nombre del Paciente",
+              "type": "text",
+              "required": true,
+              "placeholder": "Nombre completo"
+            },
+            {
+              "id": "date",
+              "name": "Fecha",
+              "type": "text",
+              "required": true,
+              "placeholder": "Mes de año"
+            }
+          ]
+        },
+        {
+          "step": 1,
+          "section": "Información del Orientador",
+          "fields": [
+            {
+              "id": "orientation_name",
+              "name": "Nombre del Orientador",
+              "type": "text",
+              "required": true,
+              "placeholder": "Nombre del profesional"
+            }
+          ],
+          "infoText": "El plan será personalizado con los datos proporcionados"
+        },
+        {
+          "step": 1,
+          "section": "Recomendaciones",
+          "fields": [
+            {
+              "id": "recommendation",
+              "name": "Recomendación Personalizada",
+              "type": "textarea",
+              "required": true,
+              "placeholder": "Escriba aquí la recomendación personalizada para el paciente...",
+              "rows": 4
+            }
+          ]
+        },
+        {
+          "step": 2,
+          "section": "Información Adicional",
+          "fields": [
+            {
+              "id": "additional_info",
+              "name": "Más información para agregar",
+              "type": "textarea",
+              "required": false,
+              "placeholder": "Ingrese cualquier información adicional que desee incluir en el plan...",
+              "rows": 6
+            }
+          ]
+        }
+      ],
+      "defaults": {
+        "patient_name": "Marta Modificación Cita",
+        "date": "marzo de 2025",
+        "orientation_name": "Marta Gimenez",
+        "recommendation": "Mantener una dieta equilibrada y realizar actividad física regular.",
+        "additional_info": ""
+      }
+    }
+  ]
+} 

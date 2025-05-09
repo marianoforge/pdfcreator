@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 // Importamos los templates locales
-import formTemplatesData from "../../data/form_templates.json";
+import formTemplatesData from "../data/form_templates.json";
 
 // Template interfaces
 interface FormField {
